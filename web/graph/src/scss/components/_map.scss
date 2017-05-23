@@ -1,0 +1,32 @@
+.map {
+  position: relative;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: 0;
+  padding-bottom: 30vh;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  @media #{$tablet} {
+    &.contact__map {
+      padding-bottom: 20vh;
+    }
+    &.locations__map {
+      padding-bottom: 40vh;
+    }
+  }
+}
+
+.fp-tableCell {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: space-between;
+}
+
+#iw_container .iw_title {
+  font-size: 16px;
+  font-weight: bold;
+}
+.iw_content {
+  padding: 15px 15px 15px 0;
+}

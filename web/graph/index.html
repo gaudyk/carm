@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Carmex</title>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&amp;subset=latin-ext" rel="stylesheet">
+    <link rel="stylesheet" href="./dist/css/main.css">
+    <script>
+      var mapContact, mapLocations
+      var infoMapContact, infoMapLocations, mapOptions
+
+      var markersDataLeft = [
+        {
+          lat: 40.6486333,
+          lng: -8.745,
+          name: 'Camping Praia do Farol',
+          address1: 'Rua Diogo Cão, 125',
+          address2: 'Praia da Barra',
+          postalCode: '3830-772 Gafanha da Nazaré' // don't insert comma in the last item of each marker
+        },
+        {
+          lat: 40.54955,
+          lng: -8.7498167,
+          name: 'Camping Costa Velha',
+          address1: 'Quinta dos Patos, n.º 2',
+          address2: 'Praia da Costa Nova',
+          postalCode: '3830-453 Gafanha da Encarnação' // don't insert comma in the last item of each marker
+        },
+        {
+          lat: 40.6447167,
+          lng: -8.7129167,
+          name: 'Camping Gafanha da Boavista',
+          address1: 'Rua dos Balneários do Complexo Desportivo',
+          address2: 'Gafanha da Nazaré',
+          postalCode: '3830-225 Gafanha da Nazaré'
+        }
+      ]
+
+      var markersDataRight = [
+        {
+          lat: 40.6386333,
+          lng: -8.745,
+          name: 'Camping Praia da Barra',
+          address1: 'Rua Diogo Cão, 125',
+          address2: 'Praia da Barra',
+          postalCode: '3830-772 Gafanha da Nazaré'
+        },
+        {
+          lat: 40.59955,
+          lng: -8.7498167,
+          name: 'Camping Costa Nova',
+          address1: 'Quinta dos Patos, n.º 2',
+          address2: 'Praia da Costa Nova',
+          postalCode: '3830-453 Gafanha da Encarnação'
+        },
+        {
+          lat: 40.6247167,
+          lng: -8.7129167,
+          name: 'Camping Gafanha da Nazaré',
+          address1: 'Rua dos Balneários do Complexo Desportivo',
+          address2: 'Gafanha da Nazaré',
+          postalCode: '3830-225 Gafanha da Nazaré'
+        }
+      ]
+
+      function initialize (setMap) {
+
+        if (setMap == 'mapContact') {
+          mapOptions = {
+            center: new google.maps.LatLng(40.601203, -8.668173),
+            zoom: 11,
+            mapTypeId: 'roadmap'
+          }
+
+          mapContact = new google.maps.Map(document.getElementById('map-contact'), mapOptions)
+
+          // a new Info Window is created
+          infoMapContact = new google.maps.InfoWindow()
+
+          // Event that closes the Info Window with a click on the map
+          google.maps.event.addListener(mapContact, 'click', function () {
+            infoMapContact.close()
+          })
+
+        } else {
+
+          mapOptions = {
+            center: new google.maps.LatLng(40.601203, -8.668173),
+            zoom: 9,
+            mapTypeId: 'roadmap'
+          }
+
+          mapLocations = new google.maps.Map(document.getElementById('map-locations'), mapOptions)
+
+          // a new Info Window is created
+          infoMapLocations = new google.maps.InfoWindow()
+
+          // Event that closes the Info Window with a click on the map
+          google.maps.event.addListener(mapLocations, 'click', function () {
+            infoMapLocations.close()
+          })
+        }
+
+        // Finally displayMarkers() function is called to begin the markers creation
+        displayMarkers(setMap)
+
+        // Create second map only when initialize function is called for the first time.
+        // Second time setMap is equal to mapLocations, so this condition returns false and it will not run
+        if (setMap == 'mapContact') {
+          initialize('mapLocations')
+        }
+
+      }
+
+      // This function will iterate over markersData array
+      // creating markers with createMarker function
+      function displayMarkers (setMap) {
+
+        var markersData
+        var map
+
+        if (setMap == 'mapContact') {
+          markersData = markersDataLeft
+          map = mapContact
+        } else {
+          markersData = markersDataRight
+          map = mapLocations
+        }
+
+        // this variable sets the map bounds according to markers position
+        var bounds = new google.maps.LatLngBounds()
+
+        // for loop traverses markersData array calling createMarker function for each marker
+        for (var i = 0; i < markersData.length; i++) {
+
+          var latlng = new google.maps.LatLng(markersData[i].lat, markersData[i].lng)
+          var name = markersData[i].name
+          var address1 = markersData[i].address1
+          var address2 = markersData[i].address2
+          var postalCode = markersData[i].postalCode
+
+          createMarker(setMap, latlng, name, address1, address2, postalCode)
+
+          // marker position is added to bounds variable
+          bounds.extend(latlng)
+        }
+
+        // Finally the bounds variable is used to set the map bounds
+        // with fitBounds() function
+        map.fitBounds(bounds)
+      }
+
+      // This function creates each marker and it sets their Info Window content
+      function createMarker (setMap, latlng, name, address1, address2, postalCode) {
+
+        var map
+        var infoWindow
+
+        if (setMap == 'mapContact') {
+          map = mapContact
+          infoWindow = infoMapContact
+        } else {
+          map = mapLocations
+          infoWindow = infoMapLocations
+        }
+
+        var marker = new google.maps.Marker({
+          map: map,
+          position: latlng,
+          title: name
+        })
+
+        // This event expects a click on a marker
+        // When this event is fired the Info Window content is created
+        // and the Info Window is opened.
+        google.maps.event.addListener(marker, 'click', function () {
+
+          // Creating the content to be inserted in the infowindow
+          var iwContent = '<div id="iw_container">' +
+            '<div class="iw_title">' + name + '</div>' +
+            '<div class="iw_content">' + address1 + '<br />' +
+            address2 + '<br />' +
+            postalCode + '</div></div>'
+
+          // including content to the Info Window.
+          infoWindow.setContent(iwContent)
+
+          // opening the Info Window in the current map and at the current marker location.
+          infoWindow.open(map, marker)
+        })
+      }
+
+      function init() {
+        google.maps.event.addDomListener(window, 'load', function(){ initialize('mapContact') });
+      }
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAadRUIeyhVqNKluJSDxGm-hiAl5jvGoYY&callback=init"
+            async defer></script>
+    <!--<script src="./src/js/google-map.js"></script>-->
+
+</head>
+
+<body>
+<header class="header">
+    <a href="/" class="logo"> <img src="./dist/images/carmex_logo.png" alt="carmex logo"></a>
+</header>
+<nav class="menu menu--desktop">
+    <ul class="menu__list clearfix">
+        <li class="menu__list__item">
+            <a href="#page-about-us">O nas</a>
+        </li>
+        <li class="menu__list__item">
+            <a href="#page-locations">Gdzie kupić</a>
+        </li>
+        <li class="menu__list__item">
+            <a href="#page-contact">Kontakt</a>
+        </li>
+    </ul>
+</nav>
+<nav class="menu--mobile" id="menu">
+    <ul class="menu--mobile__list">
+        <li class="menu--mobile__list__item"><a href="#page-about-us">O nas</a></li>
+        <li class="menu--mobile__list__item"><a href="#page-products">Produkty</a></li>
+        <li class="menu--mobile__list__item"><a href="#page-locations">Gdzie kupić</a></li>
+        <li class="menu--mobile__list__item"><a href="#page-contact">Kontakt</a></li>
+    </ul>
+</nav>
+<button class="hamburger hamburger--spring" id="menu-trigger" type="button">
+    <span class="hamburger-box">
+        <span class="hamburger-inner"></span>
+    </span>
+</button>
+
+<div id="fullpage">
+    <div class="section products" data-anchor="page-products">
+        <!--<div class="stage">-->
+            <!--<figure class="ball bubble"></figure>-->
+        <!--</div>-->
+        <div class="products-slider">
+            <div class="products-slider__item lime-twist">
+                <div class="parallax">
+                    <div class="rotate--header">
+                        <h1 class="main-heading">
+                            Lime
+                            <span class="line-break">
+                                Twist
+                            </span>
+                        </h1>
+                    </div>
+                    <div class="rotate--fruits product__fruits">
+                        <img src="dist/images/paralax/lime-twist-owoce.png" alt="carmex lime fruits" class="layer" data-depth="0.40">
+                    </div>
+                </div>
+
+                <div class="products-slider__item__image">
+                    <img src="dist/images/products/pomadka_lime_twist.png" alt="carmex pomadka lime twist">
+                </div>
+
+                <div class="products-slider__item__info flex flex-row-wrap flex--content-between">
+                    <h2 class="secondary-heading ">
+                        Carmex<br>
+                        Lime Twist
+                    </h2>
+                    <div class="info__description">
+                        <p class="text--spaced">
+                            Lip Balm
+                        </p>
+                        <p class="text--small">
+                            The iconic medicated lip balm that generations have<br>
+                            relied on to soothe and protect dry, chappead lips.
+                        </p>
+                        <p class="text--strong">
+                            Opakowanie sztyft
+                        </p>
+                        <p class="product__weight">
+                            4,25 g
+                        </p>
+                    </div>
+                    <div class="info__pros">
+                        <p class="text--spaced">
+                            Zalety
+                        </p>
+                        <ul class="info__pros__list">
+                            <li class="info__pros__list__item">
+                                Provides long-lasting protective barrier<br>
+                                to help healing
+                            </li>
+                            <li class="info__pros__list__item">
+                                Glides on smoothly to help soften and hydrate lips with moisturizing<br>
+                                cocoa butter
+                            </li>
+                            <li class="info__pros__list__item">
+                                Cools and soothes lips with camphor and menthol
+                            </li>
+                        </ul>
+                        <button class="toggle i" data-popup="lime-twist">
+                            <div class="cross">
+                                <div class="x"></div>
+                                <div class="y"></div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                <button class="toggle i mobile__toggle" data-popup="lime-twist">
+                    <div class="cross">
+                        <div class="x"></div>
+                        <div class="y"></div>
+                    </div>
+                </button>
+            </div>
+            <div class="products-slider__item moisture-plus">
+                <div class="parallax">
+                    <div class="rotate--header">
+                        <h1 class="main-heading">
+                            Moisture
+                            <span class="line-break">
+                    Plus
+                </span>
+                        </h1>
+                    </div>
+                    <div class="rotate--fruits product__fruits">
+                        <img src="dist/images/paralax/moisture-plus-owoce.png" alt="carmex moisture plus fruits" class="layer" data-depth="0.40">
+                    </div>
+                </div>
+
+                <div class="products-slider__item__image">
+                    <img src="dist/images/products/pomadka_moisture_plus.png" alt="carmex pomadka moisture plus">
+                </div>
+
+                <div class="products-slider__item__info flex flex-row-wrap flex--content-between">
+                    <h2 class="secondary-heading ">
+                        Moisture<br>
+                        Plus
+                    </h2>
+                    <div class="info__description">
+                        <p class="text--spaced">
+                            Lip Balm
+                        </p>
+                        <p class="text--small">
+                            The iconic medicated lip balm that generations have<br>
+                            relied on to soothe and protect dry, chappead lips.
+                        </p>
+                        <p class="text--strong">
+                            Opakowanie tubka
+                        </p>
+                        <p class="product__weight">
+                            2 g
+                        </p>
+                    </div>
+                    <div class="info__pros">
+                        <p class="text--spaced">
+                            Zalety
+                        </p>
+                        <ul class="info__pros__list">
+                            <li class="info__pros__list__item">
+                                Provides long-lasting protective barrier<br>
+                                to help healing
+                            </li>
+                            <li class="info__pros__list__item">
+                                Glides on smoothly to help soften and hydrate lips with moisturizing<br>
+                                cocoa butter
+                            </li>
+                            <li class="info__pros__list__item">
+                                Cools and soothes lips with camphor and menthol
+                            </li>
+                        </ul>
+                        <button class="toggle i" data-popup="moisture-plus">
+                            <div class="cross">
+                                <div class="x"></div>
+                                <div class="y"></div>
+                            </div>
+                        </button>
+                    </div>
+                    <button class="toggle i mobile__toggle" data-popup="moisture-plus">
+                        <div class="cross">
+                            <div class="x"></div>
+                            <div class="y"></div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="products-slider__item pomegranate">
+                <div class="parallax">
+                    <div class="rotate--header">
+                        <h1 class="main-heading">
+                            Pomegranate
+                            <span class="line-break">
+                    Sztyft
+                </span>
+                        </h1>
+                    </div>
+                    <div class="rotate--fruits product__fruits">
+                        <img src="dist/images/paralax/pomagranate-owoce.png" alt="carmex pomagranate fruits" class="layer" data-depth="0.40">
+                    </div>
+                </div>
+
+                <div class="products-slider__item__image">
+                    <img src="dist/images/products/pomadka_pomagranate.png" alt="carmex pomadka pomagranate">
+                </div>
+
+                <div class="products-slider__item__info flex flex-row-wrap flex--content-between">
+                    <h2 class="secondary-heading ">
+                        Carmex<br>
+                        Pomegranate
+                    </h2>
+                    <div class="info__description">
+                        <p class="text--spaced">
+                            Lip Balm
+                        </p>
+                        <p class="text--small">
+                            The iconic medicated lip balm that generations have<br>
+                            relied on to soothe and protect dry, chappead lips.
+                        </p>
+                        <p class="text--strong">
+                            Opakowanie sztyft
+                        </p>
+                        <p class="product__weight">
+                            4,25 g
+                        </p>
+                    </div>
+                    <div class="info__pros">
+                        <p class="text--spaced">
+                            Zalety
+                        </p>
+                        <ul class="info__pros__list">
+                            <li class="info__pros__list__item">
+                                Provides long-lasting protective barrier<br>
+                                to help healing
+                            </li>
+                            <li class="info__pros__list__item">
+                                Glides on smoothly to help soften and hydrate lips with moisturizing<br>
+                                cocoa butter
+                            </li>
+                            <li class="info__pros__list__item">
+                                Cools and soothes lips with camphor and menthol
+                            </li>
+                        </ul>
+                        <button class="toggle i" data-popup="pomegranate">
+                            <div class="cross">
+                                <div class="x"></div>
+                                <div class="y"></div>
+                            </div>
+                        </button>
+                    </div>
+                    <button class="toggle i mobile__toggle" data-popup="pomegranate">
+                        <div class="cross">
+                            <div class="x"></div>
+                            <div class="y"></div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="products-slider__item strawberry">
+                <div class="parallax">
+                    <div class="rotate--header">
+                        <h1 class="main-heading">
+                            Strawberry
+                            <span class="line-break">
+                    Sztyft
+                </span>
+                        </h1>
+                    </div>
+                    <div class="rotate--fruits product__fruits">
+                        <img src="dist/images/paralax/strawberry-owoce.png" alt="carmex strawberry fruits" class="layer" data-depth="0.40">
+                    </div>
+                </div>
+
+                <div class="products-slider__item__image">
+                    <img src="dist/images/products/pomadka_strawberry.png" alt="carmex pomadka strawberry">
+                </div>
+
+                <div class="products-slider__item__info flex flex-row-wrap flex--content-between">
+                    <h2 class="secondary-heading ">
+                        Carmex<br>
+                        Strawberry
+                    </h2>
+                    <div class="info__description">
+                        <p class="text--spaced">
+                            Lip Balm
+                        </p>
+                        <p class="text--small">
+                            The iconic medicated lip balm that generations have<br>
+                            relied on to soothe and protect dry, chappead lips.
+                        </p>
+                        <p class="text--strong">
+                            Opakowanie sztyft
+                        </p>
+                        <p class="product__weight">
+                            4,25 g
+                        </p>
+                    </div>
+                    <div class="info__pros">
+                        <p class="text--spaced">
+                            Zalety
+                        </p>
+                        <ul class="info__pros__list">
+                            <li class="info__pros__list__item">
+                                Provides long-lasting protective barrier<br>
+                                to help healing
+                            </li>
+                            <li class="info__pros__list__item">
+                                Glides on smoothly to help soften and hydrate lips with moisturizing<br>
+                                cocoa butter
+                            </li>
+                            <li class="info__pros__list__item">
+                                Cools and soothes lips with camphor and menthol
+                            </li>
+                        </ul>
+                        <button class="toggle i" data-popup="strawberry-balm">
+                            <div class="cross">
+                                <div class="x"></div>
+                                <div class="y"></div>
+                            </div>
+                        </button>
+                    </div>
+                    <button class="toggle i mobile__toggle" data-popup="strawberry-balm">
+                        <div class="cross">
+                            <div class="x"></div>
+                            <div class="y"></div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="products-slider__item strawberry">
+                <div class="parallax">
+                    <div class="rotate--header">
+                        <h1 class="main-heading">
+                            Strawberry
+                            <span class="line-break">
+                    Tubka
+                </span>
+                        </h1>
+                    </div>
+                    <div class="rotate--fruits product__fruits">
+                        <img src="dist/images/paralax/strawberry-owoce.png" alt="carmex strawberry fruits" class="layer" data-depth="0.40">
+                    </div>
+                </div>
+
+                <div class="products-slider__item__image">
+                    <img src="dist/images/products/tubka_strawberry.png" alt="carmex pomadka strawberry">
+                </div>
+
+                <div class="products-slider__item__info flex flex-row-wrap flex--content-between">
+                    <h2 class="secondary-heading ">
+                        Carmex<br>
+                        Strawberry
+                    </h2>
+                    <div class="info__description">
+                        <p class="text--spaced">
+                            Lip Balm
+                        </p>
+                        <p class="text--small">
+                            The iconic medicated lip balm that generations have<br>
+                            relied on to soothe and protect dry, chappead lips.
+                        </p>
+                        <p class="text--strong">
+                            Opakowanie sztyft
+                        </p>
+                        <p class="product__weight">
+                            4,25 g
+                        </p>
+                    </div>
+                    <div class="info__pros">
+                        <p class="text--spaced">
+                            Zalety
+                        </p>
+                        <ul class="info__pros__list">
+                            <li class="info__pros__list__item">
+                                Provides long-lasting protective barrier<br>
+                                to help healing
+                            </li>
+                            <li class="info__pros__list__item">
+                                Glides on smoothly to help soften and hydrate lips with moisturizing<br>
+                                cocoa butter
+                            </li>
+                            <li class="info__pros__list__item">
+                                Cools and soothes lips with camphor and menthol
+                            </li>
+                        </ul>
+                        <button class="toggle i" data-popup="strawberry-tube">
+                            <div class="cross">
+                                <div class="x"></div>
+                                <div class="y"></div>
+                            </div>
+                        </button>
+                    </div>
+                    <button class="toggle i mobile__toggle" data-popup="strawberry-tube">
+                        <div class="cross">
+                            <div class="x"></div>
+                            <div class="y"></div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="products-slider__item sweetorange">
+                <div class="parallax">
+                    <div class="rotate--header">
+                        <h1 class="main-heading">
+                            Sweet
+                            <span class="line-break">
+                    Orange
+                </span>
+                        </h1>
+                    </div>
+                    <div class="rotate--fruits product__fruits">
+                        <img src="dist/images/paralax/sweetorange-owoce.png" alt="carmex sweetorange fruits" class="layer" data-depth="0.40">
+                    </div>
+                </div>
+
+                <div class="products-slider__item__image">
+                    <img src="dist/images/products/pomadka_sweetorange.png" alt="carmex pomadka sweetorange">
+                </div>
+
+                <div class="products-slider__item__info flex flex-row-wrap flex--content-between">
+                    <h2 class="secondary-heading ">
+                        Carmex<br>
+                        Sweet Orange
+                    </h2>
+                    <div class="info__description">
+                        <p class="text--spaced">
+                            Lip Balm
+                        </p>
+                        <p class="text--small">
+                            The iconic medicated lip balm that generations have<br>
+                            relied on to soothe and protect dry, chappead lips.
+                        </p>
+                        <p class="text--strong">
+                            Opakowanie sztyft
+                        </p>
+                        <p class="product__weight">
+                            4,25 g
+                        </p>
+                    </div>
+                    <div class="info__pros">
+                        <p class="text--spaced">
+                            Zalety
+                        </p>
+                        <ul class="info__pros__list">
+                            <li class="info__pros__list__item">
+                                Provides long-lasting protective barrier<br>
+                                to help healing
+                            </li>
+                            <li class="info__pros__list__item">
+                                Glides on smoothly to help soften and hydrate lips with moisturizing<br>
+                                cocoa butter
+                            </li>
+                            <li class="info__pros__list__item">
+                                Cools and soothes lips with camphor and menthol
+                            </li>
+                        </ul>
+                        <button class="toggle i" data-popup="sweetorange">
+                            <div class="cross">
+                                <div class="x"></div>
+                                <div class="y"></div>
+                            </div>
+                        </button>
+                    </div>
+                    <button class="toggle i mobile__toggle" data-popup="sweetorange">
+                        <div class="cross">
+                            <div class="x"></div>
+                            <div class="y"></div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="products-slider__item tropical">
+                <div class="parallax">
+                    <div class="rotate--header">
+                        <h1 class="main-heading">
+                            Tropical
+                            <span class="line-break">
+                    Sztyft
+                </span>
+                        </h1>
+                    </div>
+                    <div class="rotate--fruits product__fruits">
+                        <img src="dist/images/paralax/tropical-owoce.png" alt="carmex tropical fruits" class="layer" data-depth="0.40">
+                    </div>
+                </div>
+
+                <div class="products-slider__item__image">
+                    <img src="dist/images/products/pomadka_tropical.png" alt="carmex pomadka tropical">
+                </div>
+
+                <div class="products-slider__item__info flex flex-row-wrap flex--content-between">
+                    <h2 class="secondary-heading ">
+                        Carmex<br>
+                        Tropical
+                    </h2>
+                    <div class="info__description">
+                        <p class="text--spaced">
+                            Lip Balm
+                        </p>
+                        <p class="text--small">
+                            The iconic medicated lip balm that generations have<br>
+                            relied on to soothe and protect dry, chappead lips.
+                        </p>
+                        <p class="text--strong">
+                            Opakowanie sztyft
+                        </p>
+                        <p class="product__weight">
+                            4,25 g
+                        </p>
+                    </div>
+                    <div class="info__pros">
+                        <p class="text--spaced">
+                            Zalety
+                        </p>
+                        <ul class="info__pros__list">
+                            <li class="info__pros__list__item">
+                                Provides long-lasting protective barrier<br>
+                                to help healing
+                            </li>
+                            <li class="info__pros__list__item">
+                                Glides on smoothly to help soften and hydrate lips with moisturizing<br>
+                                cocoa butter
+                            </li>
+                            <li class="info__pros__list__item">
+                                Cools and soothes lips with camphor and menthol
+                            </li>
+                        </ul>
+                        <button class="toggle i" data-popup="tropical">
+                            <div class="cross">
+                                <div class="x"></div>
+                                <div class="y"></div>
+                            </div>
+                        </button>
+                    </div>
+                    <button class="toggle i mobile__toggle" data-popup="tropical">
+                        <div class="cross">
+                            <div class="x"></div>
+                            <div class="y"></div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="products-slider__item cherry">
+                <div class="parallax">
+                    <div class="rotate--header">
+                        <h1 class="main-heading">
+                            Carmex
+                            <span class="line-break">
+                    Cherry
+                </span>
+                        </h1>
+                    </div>
+                    <div class="rotate--fruits product__fruits">
+                        <img src="dist/images/paralax/cherry-owoce.png" alt="carmex cherry fruits" class="layer" data-depth="0.40">
+                    </div>
+                </div>
+
+                <div class="products-slider__item__image">
+                    <img src="dist/images/products/tubka_cherry.png" alt="carmex pomadka cherry">
+                </div>
+
+                <div class="products-slider__item__info flex flex-row-wrap flex--content-between">
+                    <h2 class="secondary-heading ">
+                        Carmex<br>
+                        Cherry
+                    </h2>
+                    <div class="info__description">
+                        <p class="text--spaced">
+                            Lip Balm
+                        </p>
+                        <p class="text--small">
+                            The iconic medicated lip balm that generations have<br>
+                            relied on to soothe and protect dry, chappead lips.
+                        </p>
+                        <p class="text--strong">
+                            Opakowanie tubka
+                        </p>
+                        <p class="product__weight">
+                            4,25 g
+                        </p>
+                    </div>
+                    <div class="info__pros">
+                        <p class="text--spaced">
+                            Zalety
+                        </p>
+                        <ul class="info__pros__list">
+                            <li class="info__pros__list__item">
+                                Provides long-lasting protective barrier<br>
+                                to help healing
+                            </li>
+                            <li class="info__pros__list__item">
+                                Glides on smoothly to help soften and hydrate lips with moisturizing<br>
+                                cocoa butter
+                            </li>
+                            <li class="info__pros__list__item">
+                                Cools and soothes lips with camphor and menthol
+                            </li>
+                        </ul>
+                        <button class="toggle i" data-popup="cherry">
+                            <div class="cross">
+                                <div class="x"></div>
+                                <div class="y"></div>
+                            </div>
+                        </button>
+                    </div>
+                    <button class="toggle i mobile__toggle" data-popup="cherry">
+                        <div class="cross">
+                            <div class="x"></div>
+                            <div class="y"></div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="products-slider__item classic jar">
+                <div class="parallax">
+                    <div class="rotate--header">
+                        <h1 class="main-heading">
+                            Carmex
+                            <span class="line-break">
+                    Classic
+                </span>
+                        </h1>
+                    </div>
+                    <div class="rotate--fruits product__fruits">
+                        <img src="dist/images/paralax/classic-owoce.png" alt="carmex classic fruits" class="layer" data-depth="0.40">
+                    </div>
+                </div>
+
+                <div class="products-slider__item__image">
+                    <img src="dist/images/products/sloik_classic.png" alt="carmex sloik classic">
+                </div>
+
+                <div class="products-slider__item__info flex flex-row-wrap flex--content-between">
+                    <h2 class="secondary-heading ">
+                        Carmex<br>
+                        Classic
+                    </h2>
+                    <div class="info__description">
+                        <p class="text--spaced">
+                            Lip Balm
+                        </p>
+                        <p class="text--small">
+                            The iconic medicated lip balm that generations have<br>
+                            relied on to soothe and protect dry, chappead lips.
+                        </p>
+                        <p class="text--strong">
+                            Opakowanie Słoik
+                        </p>
+                        <p class="product__weight">
+                            7,25 g
+                        </p>
+                    </div>
+                    <div class="info__pros">
+                        <p class="text--spaced">
+                            Zalety
+                        </p>
+                        <ul class="info__pros__list">
+                            <li class="info__pros__list__item">
+                                Provides long-lasting protective barrier<br>
+                                to help healing
+                            </li>
+                            <li class="info__pros__list__item">
+                                Glides on smoothly to help soften and hydrate lips with moisturizing<br>
+                                cocoa butter
+                            </li>
+                            <li class="info__pros__list__item">
+                                Cools and soothes lips with camphor and menthol
+                            </li>
+                        </ul>
+                        <button class="toggle i" data-popup="classic-jar">
+                            <div class="cross">
+                                <div class="x"></div>
+                                <div class="y"></div>
+                            </div>
+                        </button>
+                    </div>
+                    <button class="toggle i mobile__toggle" data-popup="classic-jar">
+                        <div class="cross">
+                            <div class="x"></div>
+                            <div class="y"></div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="products-slider__item classic">
+                <div class="parallax">
+                    <div class="rotate--header">
+                        <h1 class="main-heading">
+                            Carmex
+                            <span class="line-break">
+                    Classic
+                </span>
+                        </h1>
+                    </div>
+                    <div class="rotate--fruits product__fruits">
+                        <img src="dist/images/paralax/classic-owoce.png" alt="carmex classic fruits" class="layer" data-depth="0.40">
+                    </div>
+                </div>
+
+                <div class="products-slider__item__image">
+                    <img src="dist/images/products/pomadka_classic.png" alt="carmex pomadka classic">
+                </div>
+
+                <div class="products-slider__item__info flex flex-row-wrap flex--content-between">
+                    <h2 class="secondary-heading ">
+                        Carmex<br>
+                        Classic
+                    </h2>
+                    <div class="info__description">
+                        <p class="text--spaced">
+                            Lip Balm
+                        </p>
+                        <p class="text--small">
+                            The iconic medicated lip balm that generations have<br>
+                            relied on to soothe and protect dry, chappead lips.
+                        </p>
+                        <p class="text--strong">
+                            Opakowanie Sztyft
+                        </p>
+                        <p class="product__weight">
+                            4,25 g
+                        </p>
+                    </div>
+                    <div class="info__pros">
+                        <p class="text--spaced">
+                            Zalety
+                        </p>
+                        <ul class="info__pros__list">
+                            <li class="info__pros__list__item">
+                                Provides long-lasting protective barrier<br>
+                                to help healing
+                            </li>
+                            <li class="info__pros__list__item">
+                                Glides on smoothly to help soften and hydrate lips with moisturizing<br>
+                                cocoa butter
+                            </li>
+                            <li class="info__pros__list__item">
+                                Cools and soothes lips with camphor and menthol
+                            </li>
+                        </ul>
+                        <button class="toggle i" data-popup="classic-balm">
+                            <div class="cross">
+                                <div class="x"></div>
+                                <div class="y"></div>
+                            </div>
+                        </button>
+                    </div>
+                    <button class="toggle i mobile__toggle" data-popup="classic-balm">
+                        <div class="cross">
+                            <div class="x"></div>
+                            <div class="y"></div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="products-slider__item classic">
+                <div class="parallax">
+                    <div class="rotate--header">
+                        <h1 class="main-heading">
+                            Carmex
+                            <span class="line-break">
+                    Classic
+                </span>
+                        </h1>
+                    </div>
+                    <div class="rotate--fruits product__fruits">
+                        <img src="dist/images/paralax/classic-owoce.png" alt="carmex classic fruits" class="layer" data-depth="0.40">
+                    </div>
+                </div>
+
+                <div class="products-slider__item__image">
+                    <img src="dist/images/products/tubka_classic.png" alt="carmex tubka classic">
+                </div>
+
+                <div class="products-slider__item__info flex flex-row-wrap flex--content-between">
+                    <h2 class="secondary-heading ">
+                        Carmex<br>
+                        Classic
+                    </h2>
+                    <div class="info__description">
+                        <p class="text--spaced">
+                            Lip Balm
+                        </p>
+                        <p class="text--small">
+                            The iconic medicated lip balm that generations have<br>
+                            relied on to soothe and protect dry, chappead lips.
+                        </p>
+                        <p class="text--strong">
+                            Opakowanie Tubka
+                        </p>
+                        <p class="product__weight">
+                            4,25 g
+                        </p>
+                    </div>
+                    <div class="info__pros">
+                        <p class="text--spaced">
+                            Zalety
+                        </p>
+                        <ul class="info__pros__list">
+                            <li class="info__pros__list__item">
+                                Provides long-lasting protective barrier<br>
+                                to help healing
+                            </li>
+                            <li class="info__pros__list__item">
+                                Glides on smoothly to help soften and hydrate lips with moisturizing<br>
+                                cocoa butter
+                            </li>
+                            <li class="info__pros__list__item">
+                                Cools and soothes lips with camphor and menthol
+                            </li>
+                        </ul>
+                        <button class="toggle i" data-popup="classic-tube">
+                            <div class="cross">
+                                <div class="x"></div>
+                                <div class="y"></div>
+                            </div>
+                        </button>
+                    </div>
+                    <button class="toggle i mobile__toggle" data-popup="classic-tube">
+                        <div class="cross">
+                            <div class="x"></div>
+                            <div class="y"></div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="slider__navigation products__navigation"></div>
+    </div>
+    <div class="section about-us" data-anchor="page-about-us">
+        <div class="container about-us__container">
+            <h1 class="main-heading">O nas</h1>
+            <div class="about-us__slider">
+                <div class="about-us__slider__item row flex flex-row-wrap">
+                    <div class="col-3-8 about-us__slider__title">
+                        <h2 class="secondary-heading address__heading">
+                            Balsamy<br>
+                            do ust carmex
+                        </h2>
+                    </div>
+                    <div class="col-5-8 about-us__slider__description">
+                        <h4>lubiane na całym świecie</h4>
+                        <p>Te balsamy pokochali już mieszkańcy ponad 37 krajów, w tym Polacy! Jego popularność jest wynikiem przede wszystkim niezwykłej skuteczności. Unikalna
+                            i sprawdzona receptura sprawia, że balsamy Carmex nie mają sobie równych
+                            w pielęgnacji i ochronie delikatnej skóry ust.
+                        </p>
+                    </div>
+                    <div class="about-us__slider__image">
+                        <img src="./dist/images/about-balsamy.png" alt="carmex balsamy">
+                    </div>
+                </div>
+                <div class="about-us__slider__item row flex flex-row-wrap">
+                    <div class="col-3-8 about-us__slider__title">
+                        <h2 class="secondary-heading address__heading">
+                            Balsamy<br>
+                            do ust carmex
+                        </h2>
+                    </div>
+                    <div class="col-5-8 about-us__slider__description">
+                        <h4>lubiane na całym świecie</h4>
+                        <p>Te balsamy pokochali już mieszkańcy ponad 37 krajów, w tym Polacy! Jego popularność jest wynikiem przede wszystkim niezwykłej skuteczności. Unikalna
+                            i sprawdzona receptura sprawia, że balsamy Carmex nie mają sobie równych
+                            w pielęgnacji i ochronie delikatnej skóry ust.
+                        </p>
+                    </div>
+                    <div class="about-us__slider__image">
+                        <img src="./dist/images/about-balsamy.png" alt="carmex balsamy">
+                    </div>
+                </div>
+                <div class="about-us__slider__item row flex flex-row-wrap">
+                    <div class="col-3-8 about-us__slider__title">
+                        <h2 class="secondary-heading address__heading">
+                            Balsamy<br>
+                            do ust carmex
+                        </h2>
+                    </div>
+                    <div class="col-5-8 about-us__slider__description">
+                        <h4>lubiane na całym świecie</h4>
+                        <p>Te balsamy pokochali już mieszkańcy ponad 37 krajów, w tym Polacy! Jego popularność jest wynikiem przede wszystkim niezwykłej skuteczności. Unikalna
+                            i sprawdzona receptura sprawia, że balsamy Carmex nie mają sobie równych
+                            w pielęgnacji i ochronie delikatnej skóry ust.
+                        </p>
+                    </div>
+                    <div class="about-us__slider__image">
+                        <img src="./dist/images/about-balsamy.png" alt="carmex balsamy">
+                    </div>
+                </div>
+            </div>
+            <div class="slider__navigation about-us__navigation"></div>
+        </div>
+    </div>
+    <div class="section locations" data-anchor="page-locations">
+        <div class="container">
+            <h1 class="main-heading">Gdzie kupić</h1>
+            <div class="row flex flex-row-wrap">
+                <div class="col-4-8 locations__address">
+                    <h2 class="secondary-heading address__heading">
+                        Rosman<br>
+                        Galeria krupówki
+                    </h2>
+                    <p class="locations__address__details">
+                        ul. Krupówki <br>
+                        50-600 Zakopane <br>
+                        tel. 56 889 66 55
+                    </p>
+                </div>
+                <div class="col-4-8 locations__select">
+                    <label for="city">Miasto: </label>
+                    <div class="rounded-select">
+                        <select name="city" id="city">
+                            <option selected>Zakopane</option>
+                            <option>Kraków</option>
+                            <option>Gdańsk</option>
+                            <option>Poznań</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="map locations__map" id="map-locations"></div>
+    </div>
+    <div class="section contact" data-anchor="page-contact">
+        <div class="container">
+            <h1 class="main-heading">Kontakt</h1>
+            <div class="row flex flex-row-wrap">
+                <div class="col-4-8 contact__address">
+                    <h2 class="secondary-heading address__heading">
+                        Bachleda<br>
+                        grupa inwestycyjna<br>
+                        sp. z o.o. sp.k.
+                    </h2>
+                    <p class="locations__address__details">
+                        ul. Krupówki, 29 <br>
+                        34-500 Zakopane
+                    </p>
+                </div>
+                <div class="col-4-8 contact__form">
+                    <form action="">
+                        <div class="form__group flex flex-row-wrap flex--content-between">
+                            <div class="form__group__item">
+                                <label for="firstname">Imię: </label>
+                                <input type="text" id="firstname" placeholder="Imię">
+                            </div>
+                            <div class="form__group__item">
+                                <label for="lastname">Nazwisko: </label>
+                                <input type="text" id="lastname" placeholder="Nazwisko">
+                            </div>
+                        </div>
+                        <div class="textarea__wrapper">
+                            <textarea name="message" id="message" cols="30" rows="5" placeholder="Wiadomość"></textarea>
+                        </div>
+                        <button class="btn" type="submit">Wyślij</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="map contact__map" id="map-contact"></div>
+    </div>
+
+    <div class="product-popup product-cherry" id="popup-cherry">
+            <div class="product-popup__wrapper flex flex-row-wrap">
+                <div class="product-popup__image">
+                    <img src="dist/images/ingredients/products-carmex-cherry.png" alt="carmex cherry">
+                </div>
+                <div class="product-popup__info">
+                    <h1 class="main-heading">Carmex cherry</h1>
+                    <div class="info__accordeon">
+                        <ul class="info__accordeon__nav flex flex-row-wrap flex--content-between">
+                            <li class="tab-link text--spaced active" data-tab="cherry-tab-1">Składniki</li>
+                            <li class="tab-link text--spaced" data-tab="cherry-tab-2">Stosowanie</li>
+                            <li class="tab-link text--spaced" data-tab="cherry-tab-3">Opinie</li>
+                        </ul>
+                        <div class="tab-content active" id="cherry-tab-1">
+                            <div class="info__accordeon__ingridients--active">
+                                <p class="flex flex--content-between ingridients__heading">
+                                    <span>Active Ingridients</span>
+                                    <span>Purpose</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>Camphor 1.70% </span>
+                                    <span class="spacer"></span>
+                                    <span> External Analgesic</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>White Petrolatum 45.30% </span>
+                                    <span class="spacer"></span>
+                                    <span> Lip Protectant</span>
+                                </p>
+                            </div>
+
+                            <div class="info__accordeon__ingridients--inactive">
+                                <p class="ingridients__heading">
+                                    Inactive Ingredients
+                                </p>
+                                <p class="ingridients__item">
+                                    lanolin, cetyl esters, theobroma cacao seed butter, paraffin, beeswax, menthol, salicylic acid, phenol, vanillin, flavor
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tab-content" id="cherry-tab-2">Stosowanie</div>
+                        <div class="tab-content" id="cherry-tab-3">Opinie</div>
+                    </div>
+                </div>
+                <button class="hamburger hamburger--spring is-active popup-close" type="button">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    <div class="product-popup product-classic" id="popup-classic-jar">
+            <div class="product-popup__wrapper flex flex-row-wrap">
+                <div class="product-popup__image">
+                    <img src="dist/images/ingredients/products-carmex-classic-sloik.png" alt="carmex classic">
+                </div>
+                <div class="product-popup__info">
+                    <h1 class="main-heading">Carmex classic</h1>
+                    <div class="info__accordeon">
+                        <ul class="info__accordeon__nav flex flex-row-wrap flex--content-between">
+                            <li class="tab-link text--spaced active" data-tab="classic-jar-tab-1">Składniki</li>
+                            <li class="tab-link text--spaced" data-tab="classic-jar-tab-2">Stosowanie</li>
+                            <li class="tab-link text--spaced" data-tab="classic-jar-tab-3">Opinie</li>
+                        </ul>
+                        <div class="tab-content active" id="classic-jar-tab-1">
+                            <div class="info__accordeon__ingridients--active">
+                                <p class="flex flex--content-between ingridients__heading">
+                                    <span>Active Ingridients</span>
+                                    <span>Purpose</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>Camphor 1.70% </span>
+                                    <span class="spacer"></span>
+                                    <span> External Analgesic</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>White Petrolatum 45.30% </span>
+                                    <span class="spacer"></span>
+                                    <span> Lip Protectant</span>
+                                </p>
+                            </div>
+
+                            <div class="info__accordeon__ingridients--inactive">
+                                <p class="ingridients__heading">
+                                    Inactive Ingredients
+                                </p>
+                                <p class="ingridients__item">
+                                    lanolin, cetyl esters, theobroma cacao seed butter, paraffin, beeswax, menthol, salicylic acid, phenol, vanillin, flavor
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tab-content" id="classic-jar-tab-2">Stosowanie</div>
+                        <div class="tab-content" id="classic-jar-tab-3">Opinie</div>
+                    </div>
+                </div>
+                <button class="hamburger hamburger--spring is-active popup-close" type="button">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    <div class="product-popup product-classic" id="popup-classic-balm">
+            <div class="product-popup__wrapper flex flex-row-wrap">
+                <div class="product-popup__image">
+                    <img src="dist/images/ingredients/products-carmex-classic-sztyft.png" alt="carmex classic">
+                </div>
+                <div class="product-popup__info">
+                    <h1 class="main-heading">Carmex classic</h1>
+                    <div class="info__accordeon">
+                        <ul class="info__accordeon__nav flex flex-row-wrap flex--content-between">
+                            <li class="tab-link text--spaced active" data-tab="classic-balm-tab-1">Składniki</li>
+                            <li class="tab-link text--spaced" data-tab="classic-balm-tab-2">Stosowanie</li>
+                            <li class="tab-link text--spaced" data-tab="classic-balm-tab-3">Opinie</li>
+                        </ul>
+                        <div class="tab-content active" id="classic-balm-tab-1">
+                            <div class="info__accordeon__ingridients--active">
+                                <p class="flex flex--content-between ingridients__heading">
+                                    <span>Active Ingridients</span>
+                                    <span>Purpose</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>Camphor 1.70% </span>
+                                    <span class="spacer"></span>
+                                    <span> External Analgesic</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>White Petrolatum 45.30% </span>
+                                    <span class="spacer"></span>
+                                    <span> Lip Protectant</span>
+                                </p>
+                            </div>
+
+                            <div class="info__accordeon__ingridients--inactive">
+                                <p class="ingridients__heading">
+                                    Inactive Ingredients
+                                </p>
+                                <p class="ingridients__item">
+                                    lanolin, cetyl esters, theobroma cacao seed butter, paraffin, beeswax, menthol, salicylic acid, phenol, vanillin, flavor
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tab-content" id="classic-balm-tab-2">Stosowanie</div>
+                        <div class="tab-content" id="classic-balm-tab-3">Opinie</div>
+                    </div>
+                </div>
+                <button class="hamburger hamburger--spring is-active popup-close" type="button">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    <div class="product-popup product-classic" id="popup-classic-tube">
+            <div class="product-popup__wrapper flex flex-row-wrap">
+                <div class="product-popup__image">
+                    <img src="dist/images/ingredients/products-carmex-classic-tubka.png" alt="carmex classic">
+                </div>
+                <div class="product-popup__info">
+                    <h1 class="main-heading">Carmex classic</h1>
+                    <div class="info__accordeon">
+                        <ul class="info__accordeon__nav flex flex-row-wrap flex--content-between">
+                            <li class="tab-link text--spaced active" data-tab="classic-tube-tab-1">Składniki</li>
+                            <li class="tab-link text--spaced" data-tab="classic-tube-tab-2">Stosowanie</li>
+                            <li class="tab-link text--spaced" data-tab="classic-tube-tab-3">Opinie</li>
+                        </ul>
+                        <div class="tab-content active" id="classic-tube-tab-1">
+                            <div class="info__accordeon__ingridients--active">
+                                <p class="flex flex--content-between ingridients__heading">
+                                    <span>Active Ingridients</span>
+                                    <span>Purpose</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>Camphor 1.70% </span>
+                                    <span class="spacer"></span>
+                                    <span> External Analgesic</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>White Petrolatum 45.30% </span>
+                                    <span class="spacer"></span>
+                                    <span> Lip Protectant</span>
+                                </p>
+                            </div>
+
+                            <div class="info__accordeon__ingridients--inactive">
+                                <p class="ingridients__heading">
+                                    Inactive Ingredients
+                                </p>
+                                <p class="ingridients__item">
+                                    lanolin, cetyl esters, theobroma cacao seed butter, paraffin, beeswax, menthol, salicylic acid, phenol, vanillin, flavor
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tab-content" id="classic-tube-tab-2">Stosowanie</div>
+                        <div class="tab-content" id="classic-tube-tab-3">Opinie</div>
+                    </div>
+                </div>
+                <button class="hamburger hamburger--spring is-active popup-close" type="button">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    <div class="product-popup product-lime-twist" id="popup-lime-twist">
+            <div class="product-popup__wrapper flex flex-row-wrap">
+                <div class="product-popup__image">
+                    <img src="dist/images/ingredients/products-carmex-lime-twist.png" alt="carmex lime twist">
+                </div>
+                <div class="product-popup__info">
+                    <h1 class="main-heading">Carmex Lime Twist</h1>
+                    <div class="info__accordeon">
+                        <ul class="info__accordeon__nav flex flex-row-wrap flex--content-between">
+                            <li class="tab-link text--spaced active" data-tab="lime-twist-tab-1">Składniki</li>
+                            <li class="tab-link text--spaced" data-tab="lime-twist-tab-2">Stosowanie</li>
+                            <li class="tab-link text--spaced" data-tab="lime-twist-tab-3">Opinie</li>
+                        </ul>
+                        <div class="tab-content active" id="lime-twist-tab-1">
+                            <div class="info__accordeon__ingridients--active">
+                                <p class="flex flex--content-between ingridients__heading">
+                                    <span>Active Ingridients</span>
+                                    <span>Purpose</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>Camphor 1.70% </span>
+                                    <span class="spacer"></span>
+                                    <span> External Analgesic</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>White Petrolatum 45.30% </span>
+                                    <span class="spacer"></span>
+                                    <span> Lip Protectant</span>
+                                </p>
+                            </div>
+
+                            <div class="info__accordeon__ingridients--inactive">
+                                <p class="ingridients__heading">
+                                    Inactive Ingredients
+                                </p>
+                                <p class="ingridients__item">
+                                    lanolin, cetyl esters, theobroma cacao seed butter, paraffin, beeswax, menthol, salicylic acid, phenol, vanillin, flavor
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tab-content" id="lime-twist-tab-2">Stosowanie</div>
+                        <div class="tab-content" id="lime-twist-tab-3">Opinie</div>
+                    </div>
+                </div>
+                <button class="hamburger hamburger--spring is-active popup-close" type="button">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    <div class="product-popup product-moisture-plus" id="popup-moisture-plus">
+            <div class="product-popup__wrapper flex flex-row-wrap">
+                <div class="product-popup__image">
+                    <img src="dist/images/ingredients/products-carmex-moisture-plus.png" alt="carmex moisture plus">
+                </div>
+                <div class="product-popup__info">
+                    <h1 class="main-heading">Moisture plus</h1>
+                    <div class="info__accordeon">
+                        <ul class="info__accordeon__nav flex flex-row-wrap flex--content-between">
+                            <li class="tab-link text--spaced active" data-tab="moisture-plus-tab-1">Składniki</li>
+                            <li class="tab-link text--spaced" data-tab="moisture-plus-tab-2">Stosowanie</li>
+                            <li class="tab-link text--spaced" data-tab="moisture-plus-tab-3">Opinie</li>
+                        </ul>
+                        <div class="tab-content active" id="moisture-plus-tab-1">
+                            <div class="info__accordeon__ingridients--active">
+                                <p class="flex flex--content-between ingridients__heading">
+                                    <span>Active Ingridients</span>
+                                    <span>Purpose</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>Camphor 1.70% </span>
+                                    <span class="spacer"></span>
+                                    <span> External Analgesic</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>White Petrolatum 45.30% </span>
+                                    <span class="spacer"></span>
+                                    <span> Lip Protectant</span>
+                                </p>
+                            </div>
+
+                            <div class="info__accordeon__ingridients--inactive">
+                                <p class="ingridients__heading">
+                                    Inactive Ingredients
+                                </p>
+                                <p class="ingridients__item">
+                                    lanolin, cetyl esters, theobroma cacao seed butter, paraffin, beeswax, menthol, salicylic acid, phenol, vanillin, flavor
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tab-content" id="moisture-plus-tab-2">Stosowanie</div>
+                        <div class="tab-content" id="moisture-plus-tab-3">Opinie</div>
+                    </div>
+                </div>
+                <button class="hamburger hamburger--spring is-active popup-close" type="button">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    <div class="product-popup product-pomegranate" id="popup-pomegranate">
+            <div class="product-popup__wrapper flex flex-row-wrap">
+                <div class="product-popup__image">
+                    <img src="dist/images/ingredients/products-carmex-moisture-plus.png" alt="carmex pomegranate">
+                </div>
+                <div class="product-popup__info">
+                    <h1 class="main-heading">Carmex pomegranate</h1>
+                    <div class="info__accordeon">
+                        <ul class="info__accordeon__nav flex flex-row-wrap flex--content-between">
+                            <li class="tab-link text--spaced active" data-tab="pomegranate-tab-1">Składniki</li>
+                            <li class="tab-link text--spaced" data-tab="pomegranate-tab-2">Stosowanie</li>
+                            <li class="tab-link text--spaced" data-tab="pomegranate-tab-3">Opinie</li>
+                        </ul>
+                        <div class="tab-content active" id="pomegranate-tab-1">
+                            <div class="info__accordeon__ingridients--active">
+                                <p class="flex flex--content-between ingridients__heading">
+                                    <span>Active Ingridients</span>
+                                    <span>Purpose</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>Camphor 1.70% </span>
+                                    <span class="spacer"></span>
+                                    <span> External Analgesic</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>White Petrolatum 45.30% </span>
+                                    <span class="spacer"></span>
+                                    <span> Lip Protectant</span>
+                                </p>
+                            </div>
+
+                            <div class="info__accordeon__ingridients--inactive">
+                                <p class="ingridients__heading">
+                                    Inactive Ingredients
+                                </p>
+                                <p class="ingridients__item">
+                                    lanolin, cetyl esters, theobroma cacao seed butter, paraffin, beeswax, menthol, salicylic acid, phenol, vanillin, flavor
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tab-content" id="pomegranate-tab-2">Stosowanie</div>
+                        <div class="tab-content" id="pomegranate-tab-3">Opinie</div>
+                    </div>
+                </div>
+                <button class="hamburger hamburger--spring is-active popup-close" type="button">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    <div class="product-popup product-strawberry" id="popup-strawberry-balm">
+            <div class="product-popup__wrapper flex flex-row-wrap">
+                <div class="product-popup__image">
+                    <img src="dist/images/ingredients/products-carmex-strawberry.png" alt="carmex strawberry">
+                </div>
+                <div class="product-popup__info">
+                    <h1 class="main-heading">Carmex strawberry</h1>
+                    <div class="info__accordeon">
+                        <ul class="info__accordeon__nav flex flex-row-wrap flex--content-between">
+                            <li class="tab-link text--spaced active" data-tab="strawberry-balm-tab-1">Składniki</li>
+                            <li class="tab-link text--spaced" data-tab="strawberry-balm-tab-2">Stosowanie</li>
+                            <li class="tab-link text--spaced" data-tab="strawberry-balm-tab-3">Opinie</li>
+                        </ul>
+                        <div class="tab-content active" id="strawberry-balm-tab-1">
+                            <div class="info__accordeon__ingridients--active">
+                                <p class="flex flex--content-between ingridients__heading">
+                                    <span>Active Ingridients</span>
+                                    <span>Purpose</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>Camphor 1.70% </span>
+                                    <span class="spacer"></span>
+                                    <span> External Analgesic</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>White Petrolatum 45.30% </span>
+                                    <span class="spacer"></span>
+                                    <span> Lip Protectant</span>
+                                </p>
+                            </div>
+
+                            <div class="info__accordeon__ingridients--inactive">
+                                <p class="ingridients__heading">
+                                    Inactive Ingredients
+                                </p>
+                                <p class="ingridients__item">
+                                    lanolin, cetyl esters, theobroma cacao seed butter, paraffin, beeswax, menthol, salicylic acid, phenol, vanillin, flavor
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tab-content" id="strawberry-balm-tab-2">Stosowanie</div>
+                        <div class="tab-content" id="strawberry-balm-tab-3">Opinie</div>
+                    </div>
+                </div>
+                <button class="hamburger hamburger--spring is-active popup-close" type="button">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    <div class="product-popup product-strawberry" id="popup-strawberry-tube">
+            <div class="product-popup__wrapper flex flex-row-wrap">
+                <div class="product-popup__image image--single">
+                    <img src="dist/images/ingredients/products-carmex-strawberry-tubka.png" alt="carmex strawberry">
+                </div>
+                <div class="product-popup__info">
+                    <h1 class="main-heading">Carmex strawberry</h1>
+                    <div class="info__accordeon">
+                        <ul class="info__accordeon__nav flex flex-row-wrap flex--content-between">
+                            <li class="tab-link text--spaced active" data-tab="strawberry-tube-tab-1">Składniki</li>
+                            <li class="tab-link text--spaced" data-tab="strawberry-tube-tab-2">Stosowanie</li>
+                            <li class="tab-link text--spaced" data-tab="strawberry-tube-tab-3">Opinie</li>
+                        </ul>
+                        <div class="tab-content active" id="strawberry-tube-tab-1">
+                            <div class="info__accordeon__ingridients--active">
+                                <p class="flex flex--content-between ingridients__heading">
+                                    <span>Active Ingridients</span>
+                                    <span>Purpose</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>Camphor 1.70% </span>
+                                    <span class="spacer"></span>
+                                    <span> External Analgesic</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>White Petrolatum 45.30% </span>
+                                    <span class="spacer"></span>
+                                    <span> Lip Protectant</span>
+                                </p>
+                            </div>
+
+                            <div class="info__accordeon__ingridients--inactive">
+                                <p class="ingridients__heading">
+                                    Inactive Ingredients
+                                </p>
+                                <p class="ingridients__item">
+                                    lanolin, cetyl esters, theobroma cacao seed butter, paraffin, beeswax, menthol, salicylic acid, phenol, vanillin, flavor
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tab-content" id="strawberry-tube-tab-2">Stosowanie</div>
+                        <div class="tab-content" id="strawberry-tube-tab-3">Opinie</div>
+                    </div>
+                </div>
+                <button class="hamburger hamburger--spring is-active popup-close" type="button">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    <div class="product-popup product-sweetorange" id="popup-sweetorange">
+            <div class="product-popup__wrapper flex flex-row-wrap">
+                <div class="product-popup__image image--single">
+                    <img src="dist/images/ingredients/products-carmex-sweet-orange.png" alt="carmex sweetorange">
+                </div>
+                <div class="product-popup__info">
+                    <h1 class="main-heading">Sweet orange</h1>
+                    <div class="info__accordeon">
+                        <ul class="info__accordeon__nav flex flex-row-wrap flex--content-between">
+                            <li class="tab-link text--spaced active" data-tab="sweetorange-tab-1">Składniki</li>
+                            <li class="tab-link text--spaced" data-tab="sweetorange-tab-2">Stosowanie</li>
+                            <li class="tab-link text--spaced" data-tab="sweetorange-tab-3">Opinie</li>
+                        </ul>
+                        <div class="tab-content active" id="sweetorange-tab-1">
+                            <div class="info__accordeon__ingridients--active">
+                                <p class="flex flex--content-between ingridients__heading">
+                                    <span>Active Ingridients</span>
+                                    <span>Purpose</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>Camphor 1.70% </span>
+                                    <span class="spacer"></span>
+                                    <span> External Analgesic</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>White Petrolatum 45.30% </span>
+                                    <span class="spacer"></span>
+                                    <span> Lip Protectant</span>
+                                </p>
+                            </div>
+
+                            <div class="info__accordeon__ingridients--inactive">
+                                <p class="ingridients__heading">
+                                    Inactive Ingredients
+                                </p>
+                                <p class="ingridients__item">
+                                    lanolin, cetyl esters, theobroma cacao seed butter, paraffin, beeswax, menthol, salicylic acid, phenol, vanillin, flavor
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tab-content" id="sweetorange-tab-2">Stosowanie</div>
+                        <div class="tab-content" id="sweetorange-tab-3">Opinie</div>
+                    </div>
+                </div>
+                <button class="hamburger hamburger--spring is-active popup-close" type="button">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    <div class="product-popup product-tropical" id="popup-tropical">
+            <div class="product-popup__wrapper flex flex-row-wrap">
+                <div class="product-popup__image">
+                    <img src="dist/images/ingredients/products-carmex-tropical.png" alt="carmex tropical">
+                </div>
+                <div class="product-popup__info">
+                    <h1 class="main-heading">Tropical sztyft</h1>
+                    <div class="info__accordeon">
+                        <ul class="info__accordeon__nav flex flex-row-wrap flex--content-between">
+                            <li class="tab-link text--spaced active" data-tab="tropical-tab-1">Składniki</li>
+                            <li class="tab-link text--spaced" data-tab="tropical-tab-2">Stosowanie</li>
+                            <li class="tab-link text--spaced" data-tab="tropical-tab-3">Opinie</li>
+                        </ul>
+                        <div class="tab-content active" id="tropical-tab-1">
+                            <div class="info__accordeon__ingridients--active">
+                                <p class="flex flex--content-between ingridients__heading">
+                                    <span>Active Ingridients</span>
+                                    <span>Purpose</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>Camphor 1.70% </span>
+                                    <span class="spacer"></span>
+                                    <span> External Analgesic</span>
+                                </p>
+                                <p class="flex flex--content-between ingridients__item">
+                                    <span>White Petrolatum 45.30% </span>
+                                    <span class="spacer"></span>
+                                    <span> Lip Protectant</span>
+                                </p>
+                            </div>
+
+                            <div class="info__accordeon__ingridients--inactive">
+                                <p class="ingridients__heading">
+                                    Inactive Ingredients
+                                </p>
+                                <p class="ingridients__item">
+                                    lanolin, cetyl esters, theobroma cacao seed butter, paraffin, beeswax, menthol, salicylic acid, phenol, vanillin, flavor
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tab-content" id="tropical-tab-2">Stosowanie</div>
+                        <div class="tab-content" id="tropical-tab-3">Opinie</div>
+                    </div>
+                </div>
+                <button class="hamburger hamburger--spring is-active popup-close" type="button">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+
+</div>
+
+<script src="./src/js/jquery-3.2.0.js"></script>
+<script src="./src/js/slick.js"></script>
+<script src="./src/js/jquery.fullPage.min.js"></script>
+<script src="./src/js/parallax.min.js"></script>
+<script src="./src/js/scripts.js"></script>
+
+<script>
+</script>
+</body>
+</html>

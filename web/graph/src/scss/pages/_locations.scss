@@ -1,0 +1,109 @@
+// -----------------------------------------------------------------------------
+// This file contains styles that are specific to the locations page.
+// -----------------------------------------------------------------------------
+.address__heading {
+  margin-bottom: 3rem;
+}
+
+.secondary-heading {
+  &:after {
+    content: '';
+    position: absolute;
+    width: 18rem;
+    height: 6px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    left: -24rem;
+    background-color: $lightyellow;
+    top: 50%;
+    transform: translateY(-50%);
+    @media #{$tablet} {
+      left: -80px;
+      height: 3px;
+      width: 60px;
+    }
+    @media #{$phone-small} {
+      width: 20px;
+      left: -30px;
+    }
+  }
+}
+
+.locations__address__details {
+  font-size: $normal;
+  letter-spacing: -0.025em;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.locations__select {
+  label {
+    display: block;
+    font-size: $normal;
+    letter-spacing: -0.025em;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+}
+
+.rounded-select {
+  background-image: url('../images/svg/select-custom-arrow.svg');
+  background-repeat: no-repeat;
+  background-position: 90% center;
+  background-size: 16px;
+  height: 45px;
+  overflow: hidden;
+  width: 260px;
+  border-radius: 20px;
+  background-color: transparent;
+  border: 2px solid $lightyellow;
+  select {
+    background: transparent;
+    border: none;
+    height: 45px;
+    padding: 5px;
+    padding-left: 20px;
+    width: 268px;
+    color: #000;
+    font-size: $small;
+    letter-spacing: -0.025em;
+    font-weight: 700;
+    @include on-event {
+      outline: none;
+    }
+  }
+  @media #{$phone} {
+    width: 100%;
+    background-position: 95% center;
+    select {
+      width: 110%;
+    }
+  }
+}
+
+@media #{$tablet} {
+  .locations__address__details,
+  .locations__select label {
+    font-size: 2.4rem;
+  }
+  .rounded-select select {
+    font-size: 3rem;
+  }
+}
+
+@media #{$phone} {
+  .locations__address {
+    order: 2;
+  }
+  .locations__select {
+    order: 1;
+    margin-bottom: 40px;
+  }
+}
+
+@media #{$phone-small} {
+  .locations__address__details {
+    font-size: 1.6rem;
+  }
+}

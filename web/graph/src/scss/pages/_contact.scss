@@ -1,0 +1,146 @@
+// -----------------------------------------------------------------------------
+// This file contains styles that are specific to the contact page.
+// -----------------------------------------------------------------------------
+.form__group {
+  margin-bottom: 20px;
+}
+
+.form__group__item {
+  width: 48%;
+  @media #{$tablet} {
+    width: 100%;
+    &:first-of-type {
+      margin-bottom: 2rem;
+    }
+  }
+}
+
+form label {
+  display: block;
+  font-size: $normal;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  letter-spacing: -0.025em;
+}
+
+input,
+textarea {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 2px solid $lightyellow;
+  border-radius: 20px;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-left: 2rem;
+  font-size: $small;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.5;
+  &:active,
+  &:focus {
+    outline: none;
+    border-color: $lightyellow;
+  }
+  &:hover {
+    outline: none;
+  }
+}
+
+.textarea__wrapper {
+  margin-bottom: 2rem;
+}
+
+textarea {
+  resize: none;
+  padding-top: 2rem;
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  font-size: $small;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.5;
+  color: $black;
+}
+::-moz-placeholder { /* Firefox 19+ */
+  font-size: $small;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.5;
+  color: $black;
+  opacity: 1;
+}
+:-ms-input-placeholder { /* IE 10+ */
+  font-size: $small;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.5;
+  color: $black;
+}
+:-moz-placeholder { /* Firefox 18- */
+  font-size: $small;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.5;
+  color: $black;
+}
+
+@media #{$desktop-large} {
+  .contact__map {
+    padding-bottom: 25vh;
+  }
+}
+
+@media #{$desktop} {
+  .contact__map {
+    padding-bottom: 30vh;
+  }
+}
+
+@media #{$tablet} {
+  .contact__address {
+    margin-bottom: 2rem;
+  }
+  form label {
+    font-size: 2.4rem;
+  }
+  input,
+  textarea {
+    font-size: 2rem;
+  }
+  ::-webkit-input-placeholder {
+    font-size: 2rem;
+  }
+  ::-moz-placeholder {
+    font-size: 2rem;
+  }
+  :-ms-input-placeholder {
+    font-size: 2rem;
+  }
+  :-moz-placeholder {
+    font-size: 2rem;
+  }
+}
+
+@media #{$phone-small} {
+  form label {
+    font-size: 2rem;
+  }
+  input,
+  textarea {
+    font-size: 1.6rem;
+  }
+  ::-webkit-input-placeholder {
+    font-size: 1.6rem;
+  }
+  ::-moz-placeholder {
+    font-size: 1.6rem;
+  }
+  :-ms-input-placeholder {
+    font-size: 1.6rem;
+  }
+  :-moz-placeholder {
+    font-size: 1.6rem;
+  }
+}

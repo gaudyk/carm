@@ -1,0 +1,44 @@
+/**
+ * Basic typography style for copy text
+ */
+body {
+  color: $black;
+  font-family: 'Poppins', 'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+  line-height: 1.4;
+  font-size: $normal;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+html {
+  font-size: 14px;
+}
+
+@media #{$desktop-large} {
+  html {
+    font-size: 12px;
+  }
+}
+
+@media #{$desktop} {
+  html {
+    font-size: 10px;
+  }
+}
+
+@media #{$phone} {
+  html {
+    font-size: 8px;
+  }
+}
+
+@media #{$phone-small} {
+  html {
+    font-size: 5px;
+  }
+}
+
