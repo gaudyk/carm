@@ -1,0 +1,106 @@
+// -----------------------------------------------------------------------------
+// This file contains all application-wide Sass variables.
+// -----------------------------------------------------------------------------
+
+/// Regular font family
+/// @type List
+$text-font-stack: 'Industry', 'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif !default;
+
+/// Code (monospace) font family
+/// @type List
+$code-font-stack: 'Courier New', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Monaco', monospace !default;
+
+/// Custom font family
+/// @type List
+$playfair-font-stack: 'Playfair Display', 'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+
+/// Custom font family
+/// @type List
+$sspro-font-stack: 'Source Sans Pro', 'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+
+/// Font Sizes
+
+/// Micro
+$micro: 0.6rem;
+
+/// Mini
+$mini: 0.8rem;
+
+/// Small
+$small: 0.9rem;
+
+/// Normal
+$normal: 1.2rem;
+
+/// Big
+$big: 3.25rem;
+
+/// Giant
+$giant: 12rem;
+
+
+
+
+$pomegranate: #d9002b;
+$orange: #ee6921;
+$creme: #c4ae96;
+$yellow: #ffbf29;
+$tropical: #ff7d36;
+$lightyellow: #ffd33b;
+$vanilla: #e7cb75;
+
+/// Colors
+/// @type Color
+$black: #050001;
+
+/// Light green
+/// @type Color
+$lightgreen: #75ba11;
+
+/// Red
+/// @type Color
+$red: #c22626;
+
+/// Strawberry
+/// @type Color
+$strawberry: #e4232c;
+
+/// Cherry
+/// @type Color
+$cherry: #d30a18;
+
+/// Gray
+/// @type Color
+$gray: #776f6f;
+
+
+
+
+
+/// Container's maximum width
+/// @type Length
+$max-width: 100% !default;
+
+
+
+
+
+// Mdia queries variables
+$phone-small:    "only screen and (max-width: 480px)";
+$phone:    "only screen and (max-width: 768px)";
+$tablet:    "only screen and (max-width: 1024px)";
+$desktop:    "only screen and (max-width: 1440px)";
+$desktop-large: "only screen and (max-width: 1680px)";
+$desktop-fullhd: "only screen and (max-width: 1920px)";
+$retina2x:    "(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi), (min-resolution: 2dppx)";
+$retina3x:    "(-webkit-min-device-pixel-ratio: 3), (min-resolution: 350dpi), (min-resolution: 3dppx)";
+
+
+
+
+
+/// Relative or absolute URL where all assets are served from
+/// @type String
+/// @example scss - When using a CDN
+///   $base-url: 'http://cdn.example.com/assets/';
+$base-url: '/assets/' !default;

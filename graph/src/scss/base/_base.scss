@@ -1,0 +1,108 @@
+// -----------------------------------------------------------------------------
+// This file contains very basic styles.
+// -----------------------------------------------------------------------------
+
+/**
+ * Set up a decent box model on the root element
+ */
+html {
+  box-sizing: border-box;
+}
+
+body {
+  overflow: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/**
+ * Make all elements from the DOM inherit from the parent box-sizing
+ * Since `*` has a specificity of 0, it does not override the `html` value
+ * making all elements inheriting from the root box-sizing value
+ * See: https://css-tricks.com/inheriting-box-sizing-probably-slightly-better-best-practice/
+ */
+*::before, *::after {
+  box-sizing: inherit;
+} 
+
+/**
+ * Basic styles for links
+ */
+a {
+  text-decoration: none;
+
+  @include on-event {
+    text-decoration: none;
+  }
+}
+
+/**
+ * Basic styles for lists
+ */
+ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+p {
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.section {
+  background-color: #fff;
+}
+
+img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.main-heading {
+  font-size: $giant;
+  letter-spacing: -0.04em;
+  color: $lightyellow;
+  @media #{$tablet} {
+    font-size: 9rem;
+  }
+  @media #{$phone} {
+    font-size: 7rem;
+  }
+  @media #{$phone-small} {
+    font-size: 5rem;
+  }
+}
+
+.secondary-heading {
+  position: relative;
+  font-size: $big;
+  letter-spacing: -0.025em;
+  line-height: 0.92;
+  @media #{$tablet} {
+    font-size: 4rem;
+  }
+  @media #{$phone} {
+    font-size: 2.6rem;
+  }
+  @media #{$phone-small} {
+    font-size: 2.2rem;
+  }
+}
+
+.text--spaced {
+  letter-spacing: 0.9em;
+  font-size: $normal;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  @media #{$tablet} {
+    font-size: 2.4rem;
+  }
+}

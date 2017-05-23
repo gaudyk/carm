@@ -1,0 +1,29 @@
+{
+  "name": "carmex",
+  "version": "1.0.0",
+  "description": "carmex website development",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "nowy",
+  "license": "ISC",
+  "dependencies": {
+    "autoprefixer": "^7.0.1",
+    "cssnano": "^3.10.0",
+    "gulp": "^3.9.1",
+    "gulp-livereload": "^3.8.1",
+    "gulp-postcss": "^7.0.0",
+    "gulp-sass": "^3.1.0",
+    "gulp-sourcemaps": "^2.6.0",
+    "gulp-task-listing": "^1.0.1",
+    "postcss-scss": "^1.0.0",
+    "stylelint": "^7.10.1",
+    "stylelint-config-standard": "^16.0.0"
+  },
+  "devDependencies": {
+    "bourbon-neat": "^2.0.0",
+    "browser-sync": "^2.18.8",
+    "gulp-minify-css": "^1.2.4"
+  }
+}

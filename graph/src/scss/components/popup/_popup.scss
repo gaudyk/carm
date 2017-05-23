@@ -1,0 +1,202 @@
+// -----------------------------------------------------------------------------
+// This file contains styles that are specific to the product popup
+// -----------------------------------------------------------------------------
+.product-popup {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  padding-top: 6rem;
+  background-color: #fff;
+  height: 100vh;
+  z-index: -1;
+  display: none;
+  &.active {
+    z-index: 999;
+  }
+  .hamburger {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1.64rem 1.36rem
+  }
+  @media #{$desktop} {
+    padding-top: 10rem;
+  }
+}
+
+.product-popup__wrapper {
+  position: relative;
+  max-width: 75%;
+  margin-left: 7.875%;
+  margin-right: auto;
+  padding-top: 5rem;
+}
+
+.product-popup__image {
+  width: 33.333%;
+  &.image--single {
+    max-width: 200px;
+  }
+}
+
+.product-popup__info {
+  width: 66.666%;
+  padding-left: 5rem;
+  padding-right: 5rem;
+  .main-heading {
+    font-size: 9rem;
+    line-height: 1;
+    margin-bottom: 5rem;
+  }
+}
+
+.ingridients__heading {
+  font-size: $normal;
+  font-weight: 600;
+}
+
+.product-cherry {
+  .main-heading {
+    color: $cherry;
+  }
+}
+
+.product-lime-twist {
+  .main-heading {
+    color: #76ba11;
+  }
+}
+
+.product-moisture-plus {
+  .main-heading {
+    color: #c2aa91;
+  }
+}
+
+.product-pomegranate {
+  .main-heading {
+    color: $pomegranate;
+  }
+}
+
+.product-strawberry {
+  .main-heading {
+    color: $strawberry;
+  }
+}
+
+.product-sweetorange {
+  .main-heading {
+    color: $orange;
+  }
+}
+
+.product-tropical {
+  .main-heading {
+    color: $tropical;
+  }
+}
+
+.product-classic {
+  .main-heading {
+    color: $yellow;
+  }
+}
+
+.info__accordeon__nav {
+  margin-bottom: 6rem;
+  .text--spaced {
+    margin-bottom: 0;
+  }
+}
+
+.info__accordeon__nav li {
+  color: $black;
+  text-transform: uppercase;
+  &.active,
+  &:hover {
+    color: #f22020;
+    cursor: pointer;
+  }
+}
+
+.ingridients__heading,
+.ingridients__item {
+  margin-bottom: 3rem;
+}
+
+.info__accordeon__ingridients--active {
+  margin-bottom: 4rem;
+  span {
+    display: block;
+  }
+  .spacer {
+    border-bottom: 1px dashed;
+    flex-grow: 1;
+    height: 1.15rem;
+  }
+}
+
+.tab-content {
+  display: none;
+  &.active {
+    display: block;
+  }
+}
+
+.toggle:hover {
+  cursor: pointer;
+}
+
+@media #{$tablet} {
+  .product-popup__image {
+    display: none;
+  }
+  .product-popup__info {
+    width: 100%;
+    padding: 0;
+  }
+}
+
+@media #{$phone} {
+  .product-popup .hamburger {
+    left: 50%;
+    top: inherit;
+    bottom: 0;
+    transform: translate(-50%, -50%);
+  }
+  .product-popup {
+    padding-top: 0;
+  }
+  .product-popup__wrapper {
+    max-width: 100%;
+    padding-top: 120px;
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-bottom: 50px;
+    margin: 0;
+  }
+  .info__accordeon__nav li {
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 10px 0;
+    font-size: 2.4rem;
+  }
+  .ingridients__heading {
+    font-size: 2rem;
+  }
+  .ingridients__item,
+  .ingridients__item span {
+    font-size: 1.6rem;
+  }
+}
+
+@media #{$phone} {
+  .product-popup__wrapper {
+    padding-top: 80px;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+}
